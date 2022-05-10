@@ -1,0 +1,30 @@
+#twitter-feelings-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999 !important;
+  position: absolute;
+  right: 0;
+  height: 100%;
+}
+.emotion {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin-bottom: 0.5rem;
+}
+.emotion:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 0.14rem rgba(0, 0, 0, 0.1);
+}
+
+.emotion img {
+  width: 100%;
+  height: 100%;
+}
+.emotion img:hover {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
