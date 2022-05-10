@@ -8,6 +8,7 @@
   "icons": {
     "128": "icon-128.png"
   },
+  "web_accessible_resources": ["happy.png", "sad.png", "neutral.png"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

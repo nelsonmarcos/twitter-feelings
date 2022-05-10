@@ -1,10 +1,10 @@
-// create a class with count of emotions
+import Emotion from "./Emotion"
 class Storage {
   constructor() {
     this.emotions = {
-      happy: 0,
-      sad: 0,
-      neutral: 0,
+      happy: new Emotion("happy"),
+      sad: new Emotion("sad"),
+      neutral: new Emotion("neutral"),
     }
     this.status = "You feel neutral"
     // set them chrome storage local
@@ -54,6 +54,15 @@ class Storage {
     }
     this.status = `You feel ${emotion}`
     this.set()
+  }
+
+  // get emotion from chrome storage local
+  getEmotion(emotionName) {
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.get("emotions", (result) => {
+        resolve(result.emotions[emotionName])
+      })
+    })
   }
 }
 
