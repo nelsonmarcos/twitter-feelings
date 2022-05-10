@@ -8,6 +8,9 @@ class Emotion {
   increment() {
     this.count++
   }
+  decrement() {
+    this.count--
+  }
 }
 
 export default Emotion

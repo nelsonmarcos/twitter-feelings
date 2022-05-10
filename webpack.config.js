@@ -100,6 +100,11 @@ var options = {
       filename: "emotions.html",
       chunks: ["emotions"],
     }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, "src", "status.html"),
+      filename: "status.html",
+      chunks: ["status"],
+    }),
     new WriteFilePlugin(),
   ],
 }

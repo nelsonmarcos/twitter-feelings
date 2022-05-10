@@ -22,6 +22,12 @@ class Storage {
     this.findStatus()
     console.log("incremented", emotion)
   }
+  decrementEmotion(emotion) {
+    this.emotions[emotion].decrement()
+    this.set()
+    this.findStatus()
+    console.log("decremented", emotion)
+  }
   findStatus() {
     const arr = Object.values(this.emotions)
     const max = arr.reduce((a, b) => {

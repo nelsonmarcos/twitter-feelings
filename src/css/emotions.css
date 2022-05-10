@@ -16,7 +16,7 @@
   margin-bottom: 0.5rem;
 }
 .emotion:hover {
-  transform: scale(1.2);
+  transform: scale(1.1);
   box-shadow: 0 0 0 0.14rem rgba(0, 0, 0, 0.1);
 }
 
@@ -27,4 +27,12 @@
 .emotion img:hover {
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.active {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 0.14rem rgba(0, 0, 0, 0.1);
+}
+.passive {
+  opacity: 0.5;
 }

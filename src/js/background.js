@@ -25,14 +25,21 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.type === "getEmotions") {
     sendResponse({
       type: "getEmotions",
-      message: Storage.emotions,
+      message: { emotions: Storage.emotions, status: Storage.status },
     })
   } else if (request.type === "incrementEmotion") {
     const emotion = request.emotion
     Storage.incrementEmotion(emotion)
     sendResponse({
       type: "incrementEmotion",
-      message: 'incremented "' + emotion + '"',
+      message: Storage.status,
+    })
+  } else if (request.type === "decrementEmotion") {
+    const emotion = request.emotion
+    Storage.decrementEmotion(emotion)
+    sendResponse({
+      type: "decrementEmotion",
+      message: Storage.status,
     })
   }
 })

@@ -16,9 +16,15 @@ console.log("hello from conent")
 
 import emotionsCss from "../css/emotions.css"
 import emotionsHtml from "../emotions.html"
+import statusHtml from "../status.html"
+
 //create a div
 let div = document.createElement("div")
 div.innerHTML = emotionsHtml
+
+let statusDiv = document.createElement("div")
+statusDiv.innerHTML = statusHtml
+
 // get #happy-emotion and add hover event listener
 
 // send message to background.js
@@ -27,6 +33,16 @@ chrome.runtime.sendMessage(
     type: "getEmotions",
   },
   function (response) {
+    const status = response.message.status
+    statusDiv.querySelector("#twitter-feelings-status").innerHTML = status
+    console.log("content.js", statusDiv)
+    console.log("timer")
+    setTimeout(() => {
+      const h2s = document.querySelectorAll("h2")
+      console.log(h2s)
+      h2s[1].insertAdjacentHTML("beforebegin", statusDiv.innerHTML)
+    }, 10000)
+
     setInterval(() => {
       try {
         const articles = Array.from(document.querySelectorAll("article"))
@@ -78,28 +94,75 @@ chrome.runtime.sendMessage(
               )
                 return
               item.value.addEventListener("mouseenter", () => {
-                item.value.style.opacity = "1"
+                const bool = arr.find((item) =>
+                  item.value.classList.contains("active")
+                )
+                if (bool) return
                 arr
                   .filter((item2) => item2.key != item.key)
                   .forEach((item2) => {
-                    item2.value.style.opacity = "0.5"
+                    item2.value.classList.add("passive")
                   })
               })
               item.value.addEventListener("mouseleave", () => {
+                const bool = arr.find((item) =>
+                  item.value.classList.contains("active")
+                )
+                if (bool) return
                 arr.forEach((item2) => {
-                  item2.value.style.opacity = "1"
+                  item2.value.classList.remove("passive")
                 })
               })
               item.value.addEventListener("click", () => {
-                chrome.runtime.sendMessage(
-                  {
-                    type: "incrementEmotion",
-                    emotion: item.key,
-                  },
-                  function (response) {
-                    console.log("incrementEmotion", response)
+                if (item.value.classList.contains("active")) {
+                  item.value.classList.remove("active")
+                  chrome.runtime.sendMessage(
+                    {
+                      type: "decrementEmotion",
+                      emotion: item.key,
+                    },
+                    function (response) {
+                      console.log("content.js", response)
+                      statusDiv.querySelector(
+                        "#twitter-feelings-status"
+                      ).innerHTML = response.message.status // TODO: status should be updated
+                    }
+                  )
+                } else {
+                  item.value.classList.remove("passive")
+                  item.value.classList.add("active")
+                  chrome.runtime.sendMessage(
+                    {
+                      type: "incrementEmotion",
+                      emotion: item.key,
+                    },
+                    function (response) {
+                      console.log("incrementEmotion", response)
+                      statusDiv.querySelector(
+                        "#twitter-feelings-status"
+                      ).innerHTML = response.message.status // TODO: status should be updated
+                    }
+                  )
+                }
+
+                arr.forEach((item2) => {
+                  if (item2.key != item.key) {
+                    if (item2.value.classList.contains("active")) {
+                      //send message to decrement emotion
+                      item2.value.classList.remove("active")
+                      item2.value.classList.add("passive")
+                      chrome.runtime.sendMessage(
+                        {
+                          type: "decrementEmotion",
+                          emotion: item2.key,
+                        },
+                        function (response) {
+                          console.log("decremented", response)
+                        }
+                      )
+                    }
                   }
-                )
+                })
               })
               item.value.classList.add("mouseenter")
               item.value.classList.add("mouseleave")
