@@ -38,9 +38,11 @@ chrome.runtime.sendMessage(
     console.log("content.js", statusDiv)
     console.log("timer")
     setTimeout(() => {
-      const h2s = document.querySelectorAll("h2")
+      const h2s = document.querySelector(
+        '[role="heading"] > span'
+      ).parentElement
       console.log(h2s)
-      h2s[1].insertAdjacentHTML("beforebegin", statusDiv.innerHTML)
+      h2s.insertAdjacentHTML("beforebegin", statusDiv.innerHTML)
     }, 10000)
 
     setInterval(() => {
@@ -123,9 +125,9 @@ chrome.runtime.sendMessage(
                     },
                     function (response) {
                       console.log("content.js", response)
-                      statusDiv.querySelector(
+                      document.querySelector(
                         "#twitter-feelings-status"
-                      ).innerHTML = response.message.status // TODO: status should be updated
+                      ).innerText = response.message // TODO: status should be updated
                     }
                   )
                 } else {
@@ -137,10 +139,10 @@ chrome.runtime.sendMessage(
                       emotion: item.key,
                     },
                     function (response) {
-                      console.log("incrementEmotion", response)
-                      statusDiv.querySelector(
+                      console.log("incrementEmotionfdfd", response)
+                      document.querySelector(
                         "#twitter-feelings-status"
-                      ).innerHTML = response.message.status // TODO: status should be updated
+                      ).innerText = response.message // TODO: status should be updated
                     }
                   )
                 }
@@ -158,6 +160,9 @@ chrome.runtime.sendMessage(
                         },
                         function (response) {
                           console.log("decremented", response)
+                          document.querySelector(
+                            "#twitter-feelings-status"
+                          ).innerText = response.message // TODO: status should be updated
                         }
                       )
                     }

@@ -6,7 +6,7 @@ class Storage {
       sad: new Emotion("sad"),
       neutral: new Emotion("neutral"),
     }
-    this.status = "You feel neutral"
+    this.status = "Twitter makes you neutral"
     // set them chrome storage local
     this.set()
   }
@@ -33,7 +33,7 @@ class Storage {
     const max = arr.reduce((a, b) => {
       return a.count > b.count ? a : b
     })
-    this.status = `You feel ${max.emotion}`
+    this.status = `Twitter makes you feel ${max.emotion}`
     this.set()
     console.log("found status", this.status)
   }
