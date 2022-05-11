@@ -23,6 +23,7 @@
     "tabs",
     "webRequest",
     "webRequestBlocking",
+    "alarms",
     "*://*/*"
   ],
   "manifest_version": 2,

@@ -18,16 +18,7 @@ class Storage {
       ids: this.ids,
     })
   }
-  incrementEmotion(emotion) {
-    this.emotions[emotion].increment()
-    this.set()
-    this.findStatus()
-  }
-  decrementEmotion(emotion) {
-    this.emotions[emotion].decrement()
-    this.set()
-    this.findStatus()
-  }
+
   findStatus() {
     const arr = Object.values(this.emotions)
     const max = arr.reduce((a, b) => {
@@ -53,6 +44,17 @@ class Storage {
       this.ids[id] = emotion
     }
     this.set()
+  }
+  resetStorage() {
+    this.emotions = {
+      happy: new Emotion("happy"),
+      sad: new Emotion("sad"),
+      neutral: new Emotion("neutral"),
+    }
+    this.ids = {}
+    this.status = "Twitter makes you neutral"
+    this.set()
+    console.log("reset")
   }
 }
 

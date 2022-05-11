@@ -46,6 +46,18 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 chrome.runtime.onInstalled.addListener(function () {
   console.log("First install")
+  // every day at 12 am reset the storage
+  chrome.alarms.create("resetStorage", {
+    when: new Date().setHours(12, 0, 0, 0),
+    periodInMinutes: 1440,
+  })
+
+  chrome.alarms.onAlarm.addListener(function (alarm) {
+    if (alarm.name === "resetStorage") {
+      Storage.resetStorage()
+    }
+  })
+
   var callback = function (details) {
     if (details.url.includes("update_subscriptions")) {
       // get tab
