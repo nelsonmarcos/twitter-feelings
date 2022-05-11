@@ -2,6 +2,14 @@
   "name": "Twitter Feelings",
   "version": "1.0",
   "description": "See how Twitter makes you feel",
+  "author": "Uğur Kellecioğlu",
+  "contributors": [
+    "Uğur Kellecioğlu"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nelsonmarcos/twitter-feelings"
+  },
   "scripts": {
     "build": "node utils/build.js",
     "start": "node utils/webserver.js"

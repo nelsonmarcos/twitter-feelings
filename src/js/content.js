@@ -1,7 +1,5 @@
 import Emotion from "./background/Emotion"
 
-console.log("hello from conent")
-
 import emotionsCss from "../css/emotions.css"
 import emotionsHtml from "../emotions.html"
 import statusHtml from "../status.html"
@@ -19,7 +17,6 @@ chrome.runtime.sendMessage(
     type: "getEmotions",
   },
   function (response) {
-    console.log("🚀 ~ file: content.js ~ line 22 ~ response", response)
     const ids = response.message.ids
     setInterval(() => {
       try {
@@ -44,9 +41,16 @@ chrome.runtime.sendMessage(
           feelingsWrappers.forEach((wrapper) => {
             if (wrapper.classList.length >= 1) return
             const as = wrapper.parentElement.querySelectorAll("a")
-            const a = as[as.length - 1]
-            const url = a.href.split("status/")[1].split("/")[0]
-            wrapper.classList.add(url)
+            const a = Array.from(as).find((item) =>
+              item.href.includes("/status/")
+            )
+            console.log(a)
+            const url = a.href.split("status/")[1]
+            if (url.includes("/")) {
+              wrapper.classList.add(url.split("/")[0])
+            } else {
+              wrapper.classList.add(url)
+            }
 
             // get .emotion-happy
             const happy = wrapper.querySelector(".emotion-happy")
@@ -126,7 +130,6 @@ chrome.runtime.sendMessage(
                         .split("/")[0],
                     },
                     function (response) {
-                      console.log("content.js", response)
                       document.querySelector(
                         "#twitter-feelings-status"
                       ).innerText = response.message // TODO: status should be updated
@@ -135,14 +138,17 @@ chrome.runtime.sendMessage(
                 } else {
                   item.value.classList.remove("passive")
                   item.value.classList.add("active")
-                  console.log(
-                    "🚀 ~ file: content.js ~ line 111 ~ item.value.addEventListener ~ item",
-                    item
-                  )
                   const as =
                     item.value.parentElement.parentElement.querySelectorAll(
                       "article a"
                     )
+                  let a = Array.from(as).find((item) =>
+                    item.href.includes("/status/")
+                  )
+                  if (a.href.split("status/")[1].includes("/"))
+                    a = a.href.split("status/")[1].split("/")[0]
+                  else a = a.href.split("status/")[1]
+
                   arr.forEach((item2) => {
                     if (item2.key != item.key) {
                       if (item2.value.classList.contains("active")) {
@@ -153,9 +159,7 @@ chrome.runtime.sendMessage(
                           {
                             type: "decrementEmotionWithId",
                             emotion: item.key,
-                            id: as[as.length - 1].href
-                              .split("status/")[1]
-                              .split("/")[0],
+                            id: a,
                           },
                           function (response) {
                             document.querySelector(
@@ -170,9 +174,7 @@ chrome.runtime.sendMessage(
                     {
                       type: "incrementEmotionWithId",
                       emotion: item.key,
-                      id: as[as.length - 1].href
-                        .split("status/")[1]
-                        .split("/")[0],
+                      id: a,
                     },
                     function (response) {
                       document.querySelector(

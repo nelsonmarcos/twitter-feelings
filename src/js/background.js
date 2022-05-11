@@ -7,9 +7,12 @@ import Storage from "./background/Storage"
 import Emotion from "./background/Emotion"
 Storage = new Storage()
 
+/**
+ * @author Uğur Kellecioğlu <ugur.kellecioglu@outlook.com>
+ */
+
 // get message from content.js
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log("background.js", request)
   if (request.type === "getEmotions") {
     sendResponse({
       type: "getEmotions",
@@ -24,6 +27,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     const id = request.id
 
     Storage.incrementEmotionWithId(emotion, id)
+    Storage.set()
+    Storage.findStatus()
     sendResponse({
       type: "incrementEmotionWithId",
       message: Storage.status,
@@ -33,6 +38,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     const id = request.id
 
     Storage.decrementEmotionWithId(emotion, id)
+    Storage.set()
+    Storage.findStatus()
     sendResponse({
       type: "decrementEmotionWithId",
       message: Storage.status,
@@ -40,12 +47,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
 })
 
-// chrome.runtime.onInstalled.addListener(function (info) {
-//   console.log("First install", info)
-// })
-
 chrome.runtime.onInstalled.addListener(function () {
-  console.log("First install")
+  // first time install
   // every day at 12 am reset the storage
   chrome.alarms.create("resetStorage", {
     when: new Date().setHours(12, 0, 0, 0),
@@ -58,25 +61,21 @@ chrome.runtime.onInstalled.addListener(function () {
     }
   })
 
-  var callback = function (details) {
-    if (details.url.includes("update_subscriptions")) {
-      // get tab
-      chrome.tabs.get(details.tabId, function (tab) {
-        // send message to content.js
-        chrome.tabs.sendMessage(tab.id, {
-          type: "update_subscriptions",
-          message: Storage.emotions,
-        })
-      })
-    }
-  }
-  var filter = { urls: ["<all_urls>"] }
-  var opt_extraInfoSpec = []
-
   chrome.webRequest.onBeforeRequest.addListener(
-    callback,
-    filter,
-    opt_extraInfoSpec
+    function (details) {
+      if (details.url.includes("update_subscriptions")) {
+        // get tab
+        chrome.tabs.get(details.tabId, function (tab) {
+          // send message to content.js
+          chrome.tabs.sendMessage(tab.id, {
+            type: "update_subscriptions",
+            message: Storage.emotions,
+          })
+        })
+      }
+    },
+    { urls: ["<all_urls>"] },
+    []
   )
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status === "complete") {
@@ -87,5 +86,3 @@ chrome.runtime.onInstalled.addListener(function () {
     }
   })
 })
-
-console.log("background script now running")

@@ -1,4 +1,11 @@
-// create a class with count of number
+/**
+ * @author Uğur Kellecioğlu <ugur.kellecioglu@outlook.com>
+ */
+
+/**
+ * @class Emotion
+ * @param {string} emotion - The emotion name
+ */
 class Emotion {
   constructor(emotion) {
     this.emotion = emotion
