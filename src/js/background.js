@@ -53,12 +53,12 @@ chrome.runtime.onInstalled.addListener(function () {
   // first time install
   // every day at 12 am reset the storage
   chrome.alarms.create("resetStorage", {
-    when: new Date().setHours(12, 0, 0, 0),
-    periodInMinutes: 1440,
+    when: new Date().setHours(24, 0, 0, 0),
   })
 
   chrome.alarms.onAlarm.addListener(function (alarm) {
     if (alarm.name === "resetStorage") {
+      console.log("Reset storage", new Date().toLocaleString())
       Storage.resetStorage()
     }
   })
