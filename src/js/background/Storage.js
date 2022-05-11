@@ -6,6 +6,7 @@ class Storage {
       sad: new Emotion("sad"),
       neutral: new Emotion("neutral"),
     }
+    this.ids = {}
     this.status = "Twitter makes you neutral"
     // set them chrome storage local
     this.set()
@@ -14,19 +15,26 @@ class Storage {
     chrome.storage.local.set({
       emotions: this.emotions,
       status: this.status,
+      ids: this.ids,
     })
   }
   incrementEmotion(emotion) {
+    console.log(
+      "🚀 ~ file: Storage.js ~ line 22 ~ Storage ~ incrementEmotion ~ emotion",
+      emotion
+    )
     this.emotions[emotion].increment()
     this.set()
     this.findStatus()
-    console.log("incremented", emotion)
   }
   decrementEmotion(emotion) {
+    console.log(
+      "🚀 ~ file: Storage.js ~ line 28 ~ Storage ~ decrementEmotion ~ emotion",
+      emotion
+    )
     this.emotions[emotion].decrement()
     this.set()
     this.findStatus()
-    console.log("decremented", emotion)
   }
   findStatus() {
     const arr = Object.values(this.emotions)
@@ -34,8 +42,23 @@ class Storage {
       return a.count > b.count ? a : b
     })
     this.status = `Twitter makes you feel ${max.emotion}`
+    console.log(
+      "🚀 ~ file: Storage.js ~ line 39 ~ Storage ~ findStatus ~ this.status",
+      this.status
+    )
     this.set()
-    console.log("found status", this.status)
+  }
+  incrementEmotionWithId(emotion, id) {
+    console.log(
+      "🚀 ~ file: Storage.js ~ line 43 ~ Storage ~ incrementEmotionWithId ~ emotion, id",
+      emotion,
+      id
+    )
+    this.emotions[emotion].increment()
+    this.ids[id] = emotion
+
+    this.set()
+    this.findStatus()
   }
 }
 

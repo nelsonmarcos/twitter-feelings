@@ -19,8 +19,9 @@ chrome.runtime.sendMessage(
     type: "getEmotions",
   },
   function (response) {
+    console.log("🚀 ~ file: content.js ~ line 22 ~ response", response)
+    const ids = response.message.ids
     setInterval(() => {
-      injectStatus(response)
       try {
         const articles = Array.from(document.querySelectorAll("article"))
         if (articles.length > 0) {
@@ -41,12 +42,19 @@ chrome.runtime.sendMessage(
         )
         if (feelingsWrappers.length > 0) {
           feelingsWrappers.forEach((wrapper) => {
+            const as = wrapper.parentElement.querySelectorAll("a")
+            const a = as[as.length - 1]
+            console.log(a)
+            const url = a.href.split("status/")[1].split("/")[0]
+            wrapper.classList.add(url)
+
             // get .emotion-happy
             const happy = wrapper.querySelector(".emotion-happy")
             // get .emotion-sad
             const sad = wrapper.querySelector(".emotion-sad")
             // get .emotion-neutral
             const neutral = wrapper.querySelector(".emotion-neutral")
+
             const arr = [
               {
                 key: "happy",
@@ -61,6 +69,7 @@ chrome.runtime.sendMessage(
                 value: neutral,
               },
             ]
+
             arr.forEach((item) => {
               if (!item.value) return
 
@@ -70,11 +79,26 @@ chrome.runtime.sendMessage(
                 item.value.classList.contains("mouseleave")
               )
                 return
+
+              if (
+                ids[url] &&
+                wrapper.classList.contains(url) &&
+                item.key === ids[url]
+              ) {
+                item.value.classList.add("active")
+                arr
+                  .filter((item2) => item2.key !== item.key)
+                  .forEach((item2) => {
+                    item2.value.classList.remove("active")
+                    item2.value.classList.add("passive")
+                  })
+              }
               item.value.addEventListener("mouseenter", () => {
                 const bool = arr.find((item) =>
                   item.value.classList.contains("active")
                 )
                 if (bool) return
+
                 arr
                   .filter((item2) => item2.key != item.key)
                   .forEach((item2) => {
@@ -108,16 +132,30 @@ chrome.runtime.sendMessage(
                 } else {
                   item.value.classList.remove("passive")
                   item.value.classList.add("active")
+                  console.log(
+                    "🚀 ~ file: content.js ~ line 111 ~ item.value.addEventListener ~ item",
+                    item
+                  )
+                  const as =
+                    item.value.parentElement.parentElement.querySelectorAll(
+                      "article a"
+                    )
                   chrome.runtime.sendMessage(
                     {
-                      type: "incrementEmotion",
+                      type: "incrementEmotionWithId",
                       emotion: item.key,
+                      id: as[as.length - 1].href
+                        .split("status/")[1]
+                        .split("/")[0],
                     },
                     function (response) {
-                      console.log("incrementEmotionfdfd", response)
+                      console.log(
+                        "🚀 ~ file: content.js ~ line 120 ~ item.value.addEventListener ~ response",
+                        response
+                      )
                       document.querySelector(
                         "#twitter-feelings-status"
-                      ).innerText = response.message // TODO: status should be updated
+                      ).innerText = response.message
                     }
                   )
                 }
@@ -137,7 +175,7 @@ chrome.runtime.sendMessage(
                           console.log("decremented", response)
                           document.querySelector(
                             "#twitter-feelings-status"
-                          ).innerText = response.message // TODO: status should be updated
+                          ).innerText = response.message
                         }
                       )
                     }
@@ -156,6 +194,21 @@ chrome.runtime.sendMessage(
     }, 1000)
   }
 )
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.message === "TabUpdated") {
+    injectStatus(request.status)
+  }
+  if (request.type === "update_subscriptions") {
+    // get all a
+    const as = Array.from(document.querySelectorAll("a"))
+    as.forEach((a) => {
+      if (a.href.includes("status")) {
+        // console.log(a.href.split("status/")[1])
+      }
+    })
+  }
+})
 
 function _waitForElement(selector, delay = 50, tries = 100) {
   const element = document.querySelector(selector)
@@ -185,10 +238,9 @@ function _waitForElement(selector, delay = 50, tries = 100) {
   }
 }
 
-const injectStatus = async (response) => {
+const injectStatus = async (status) => {
   const h2s = await _waitForElement(`[role="heading"] > span`)
   const parent = h2s.parentElement
-  const status = response.message.status
   statusDiv.querySelector("#twitter-feelings-status").innerHTML = status
   parent.insertAdjacentHTML("beforebegin", statusDiv.innerHTML)
 }
