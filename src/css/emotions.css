@@ -7,17 +7,20 @@
   position: absolute;
   right: 0;
   height: 100%;
+  margin-right: 0.5rem;
+  cursor: default;
+  z-index: 999;
 }
 .emotion {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   transition: all 0.3s ease;
   margin-bottom: 0.5rem;
 }
 .emotion:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 0 0.14rem rgba(0, 0, 0, 0.1);
+  transform: scale(1.08);
+  box-shadow: 0 0 0 0.1rem rgba(0, 0, 0, 0.08);
 }
 
 .emotion img {
@@ -30,8 +33,8 @@
 }
 
 .active {
-  transform: scale(1.2);
-  box-shadow: 0 0 0 0.14rem rgba(0, 0, 0, 0.1);
+  transform: scale(1.08);
+  box-shadow: 0 0 0 0.1rem rgba(0, 0, 0, 0.1);
 }
 .passive {
   opacity: 0.5;

@@ -44,12 +44,14 @@ chrome.runtime.sendMessage(
             const a = Array.from(as).find((item) =>
               item.href.includes("/status/")
             )
-            console.log(a)
-            const url = a.href.split("status/")[1]
-            if (url.includes("/")) {
-              wrapper.classList.add(url.split("/")[0])
-            } else {
-              wrapper.classList.add(url)
+            var url = ""
+            if (a) {
+              url = a.href.split("status/")[1]
+              if (url.includes("/")) {
+                wrapper.classList.add(url.split("/")[0])
+              } else {
+                wrapper.classList.add(url)
+              }
             }
 
             // get .emotion-happy
