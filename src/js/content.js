@@ -17,7 +17,7 @@ chrome.runtime.sendMessage(
     type: "getEmotions",
   },
   function (response) {
-    const ids = response.message.ids
+    var ids = response.message.ids
     setInterval(() => {
       try {
         const articles = Array.from(document.querySelectorAll("article"))
@@ -39,7 +39,6 @@ chrome.runtime.sendMessage(
         )
         if (feelingsWrappers.length > 0) {
           feelingsWrappers.forEach((wrapper) => {
-            if (wrapper.classList.length >= 1) return
             const as = wrapper.parentElement.querySelectorAll("a")
             const a = Array.from(as).find((item) =>
               item.href.includes("/status/")
@@ -132,9 +131,11 @@ chrome.runtime.sendMessage(
                         .split("/")[0],
                     },
                     function (response) {
-                      document.querySelector(
-                        "#twitter-feelings-status"
-                      ).innerText = response.message // TODO: status should be updated
+                      document
+                        .querySelector(".twitter-feelings-status-wrapper")
+                        .remove()
+                      injectStatus(response.message)
+                      ids = response.ids
                     }
                   )
                 } else {
@@ -164,9 +165,11 @@ chrome.runtime.sendMessage(
                             id: a,
                           },
                           function (response) {
-                            document.querySelector(
-                              "#twitter-feelings-status"
-                            ).innerText = response.message
+                            ids = response.ids
+                            document
+                              .querySelector(".twitter-feelings-status-wrapper")
+                              .remove()
+                            injectStatus(response.message)
                           }
                         )
                       }
@@ -179,9 +182,11 @@ chrome.runtime.sendMessage(
                       id: a,
                     },
                     function (response) {
-                      document.querySelector(
-                        "#twitter-feelings-status"
-                      ).innerText = response.message
+                      ids = response.ids
+                      document
+                        .querySelector(".twitter-feelings-status-wrapper")
+                        .remove()
+                      injectStatus(response.message)
                     }
                   )
                 }

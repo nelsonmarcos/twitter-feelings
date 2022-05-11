@@ -32,6 +32,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     sendResponse({
       type: "incrementEmotionWithId",
       message: Storage.status,
+      ids: Storage.ids,
     })
   } else if (request.type === "decrementEmotionWithId") {
     const emotion = request.emotion
@@ -43,6 +44,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     sendResponse({
       type: "decrementEmotionWithId",
       message: Storage.status,
+      ids: Storage.ids,
     })
   }
 })
