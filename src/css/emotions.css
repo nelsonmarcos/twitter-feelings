@@ -1,0 +1,41 @@
+#twitter-feelings-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999 !important;
+  position: absolute;
+  right: 0;
+  height: 100%;
+  margin-right: 0.5rem;
+  cursor: default;
+  z-index: 999;
+}
+.emotion {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin-bottom: 0.5rem;
+}
+.emotion:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 0.1rem rgba(0, 0, 0, 0.08);
+}
+
+.emotion img {
+  width: 100%;
+  height: 100%;
+}
+.emotion img:hover {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.active {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 0.1rem rgba(0, 0, 0, 0.1);
+}
+.passive {
+  opacity: 0.5;
+}
