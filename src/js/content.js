@@ -5,8 +5,6 @@ import emotionsHtml from "../emotions.html"
 import statusHtml from "../status.html"
 
 //create a div
-let div = document.createElement("div")
-div.innerHTML = emotionsHtml
 
 let statusDiv = document.createElement("div")
 statusDiv.innerHTML = statusHtml
@@ -17,6 +15,12 @@ chrome.runtime.sendMessage(
     type: "getEmotions",
   },
   function (response) {
+    let div = document.createElement("div")
+    div.innerHTML = emotionsHtml
+    const emotions = response.message.emotions
+    div.querySelector("#happy-emotion").src = emotions.happy.URL
+    div.querySelector("#neutral-emotion").src = emotions.neutral.URL
+    div.querySelector("#sad-emotion").src = emotions.sad.URL
     var ids = response.message.ids
     setInterval(() => {
       try {
