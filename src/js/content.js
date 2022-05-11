@@ -2,18 +2,6 @@ import Emotion from "./background/Emotion"
 
 console.log("hello from conent")
 
-// let element = document.createElement("div")
-// element.innerHTML = "hello from content.js"
-// document.body.appendChild(element)
-
-// get message from background.js
-// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-//   console.log("content.jsxx", request)
-//   sendResponse({
-//     message: "hello from content.js",
-//   })
-// })
-
 import emotionsCss from "../css/emotions.css"
 import emotionsHtml from "../emotions.html"
 import statusHtml from "../status.html"
@@ -25,27 +13,14 @@ div.innerHTML = emotionsHtml
 let statusDiv = document.createElement("div")
 statusDiv.innerHTML = statusHtml
 
-// get #happy-emotion and add hover event listener
-
 // send message to background.js
 chrome.runtime.sendMessage(
   {
     type: "getEmotions",
   },
   function (response) {
-    const status = response.message.status
-    statusDiv.querySelector("#twitter-feelings-status").innerHTML = status
-    console.log("content.js", statusDiv)
-    console.log("timer")
-    setTimeout(() => {
-      const h2s = document.querySelector(
-        '[role="heading"] > span'
-      ).parentElement
-      console.log(h2s)
-      h2s.insertAdjacentHTML("beforebegin", statusDiv.innerHTML)
-    }, 10000)
-
     setInterval(() => {
+      injectStatus(response)
       try {
         const articles = Array.from(document.querySelectorAll("article"))
         if (articles.length > 0) {
@@ -181,3 +156,39 @@ chrome.runtime.sendMessage(
     }, 1000)
   }
 )
+
+function _waitForElement(selector, delay = 50, tries = 100) {
+  const element = document.querySelector(selector)
+
+  if (!window[`__${selector}`]) {
+    window[`__${selector}`] = 0
+    window[`__${selector}__delay`] = delay
+    window[`__${selector}__tries`] = tries
+  }
+
+  function _search() {
+    return new Promise((resolve) => {
+      window[`__${selector}`]++
+      setTimeout(resolve, window[`__${selector}__delay`])
+    })
+  }
+
+  if (element === null) {
+    if (window[`__${selector}`] >= window[`__${selector}__tries`]) {
+      window[`__${selector}`] = 0
+      return Promise.resolve(null)
+    }
+
+    return _search().then(() => _waitForElement(selector))
+  } else {
+    return Promise.resolve(element)
+  }
+}
+
+const injectStatus = async (response) => {
+  const h2s = await _waitForElement(`[role="heading"] > span`)
+  const parent = h2s.parentElement
+  const status = response.message.status
+  statusDiv.querySelector("#twitter-feelings-status").innerHTML = status
+  parent.insertAdjacentHTML("beforebegin", statusDiv.innerHTML)
+}
