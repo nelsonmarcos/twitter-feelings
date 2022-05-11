@@ -19,19 +19,11 @@ class Storage {
     })
   }
   incrementEmotion(emotion) {
-    console.log(
-      "🚀 ~ file: Storage.js ~ line 22 ~ Storage ~ incrementEmotion ~ emotion",
-      emotion
-    )
     this.emotions[emotion].increment()
     this.set()
     this.findStatus()
   }
   decrementEmotion(emotion) {
-    console.log(
-      "🚀 ~ file: Storage.js ~ line 28 ~ Storage ~ decrementEmotion ~ emotion",
-      emotion
-    )
     this.emotions[emotion].decrement()
     this.set()
     this.findStatus()
@@ -42,23 +34,25 @@ class Storage {
       return a.count > b.count ? a : b
     })
     this.status = `Twitter makes you feel ${max.emotion}`
-    console.log(
-      "🚀 ~ file: Storage.js ~ line 39 ~ Storage ~ findStatus ~ this.status",
-      this.status
-    )
+
     this.set()
   }
   incrementEmotionWithId(emotion, id) {
-    console.log(
-      "🚀 ~ file: Storage.js ~ line 43 ~ Storage ~ incrementEmotionWithId ~ emotion, id",
-      emotion,
-      id
-    )
     this.emotions[emotion].increment()
     this.ids[id] = emotion
 
     this.set()
     this.findStatus()
+  }
+  decrementEmotionWithId(emotion, id) {
+    const current = this.ids[id]
+    this.emotions[current].decrement()
+    if (this.emotions[emotion].count === 0) {
+      delete this.ids[id]
+    } else {
+      this.ids[id] = emotion
+    }
+    this.set()
   }
 }
 

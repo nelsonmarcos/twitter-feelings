@@ -6,18 +6,6 @@ import "../img/neutral.png"
 import Storage from "./background/Storage"
 import Emotion from "./background/Emotion"
 Storage = new Storage()
-console.log(Storage)
-
-// // send message to content.js
-// chrome.runtime.sendMessage(
-//   {
-//     type: "background",
-//     message: Storage.emotions,
-//   },
-//   function (response) {
-//     console.log("background.js", response)
-//   }
-// )
 
 // get message from content.js
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -31,29 +19,22 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         status: Storage.status,
       },
     })
-  } else if (request.type === "incrementEmotion") {
-    const emotion = request.emotion
-    Storage.incrementEmotion(emotion)
-    sendResponse({
-      type: "incrementEmotion",
-      message: Storage.status,
-    })
-  } else if (request.type === "decrementEmotion") {
-    const emotion = request.emotion
-    Storage.decrementEmotion(emotion)
-    sendResponse({
-      type: "decrementEmotion",
-      message: Storage.status,
-    })
   } else if (request.type === "incrementEmotionWithId") {
     const emotion = request.emotion
-    console.log("🚀 ~ file: background.js ~ line 46 ~ emotion", emotion)
     const id = request.id
-    console.log("🚀 ~ file: background.js ~ line 47 ~ id", id)
 
     Storage.incrementEmotionWithId(emotion, id)
     sendResponse({
       type: "incrementEmotionWithId",
+      message: Storage.status,
+    })
+  } else if (request.type === "decrementEmotionWithId") {
+    const emotion = request.emotion
+    const id = request.id
+
+    Storage.decrementEmotionWithId(emotion, id)
+    sendResponse({
+      type: "decrementEmotionWithId",
       message: Storage.status,
     })
   }
@@ -64,7 +45,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 // })
 
 chrome.runtime.onInstalled.addListener(function () {
-  // ...
   console.log("First install")
   var callback = function (details) {
     if (details.url.includes("update_subscriptions")) {
@@ -87,9 +67,6 @@ chrome.runtime.onInstalled.addListener(function () {
     opt_extraInfoSpec
   )
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    // changeInfo object: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onUpdated#changeInfo
-    // status is more reliable (in my case)
-    // use "alert(JSON.stringify(changeInfo))" to check what's available and works in your case
     if (changeInfo.status === "complete") {
       chrome.tabs.sendMessage(tabId, {
         message: "TabUpdated",

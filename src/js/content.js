@@ -42,9 +42,9 @@ chrome.runtime.sendMessage(
         )
         if (feelingsWrappers.length > 0) {
           feelingsWrappers.forEach((wrapper) => {
+            if (wrapper.classList.length >= 1) return
             const as = wrapper.parentElement.querySelectorAll("a")
             const a = as[as.length - 1]
-            console.log(a)
             const url = a.href.split("status/")[1].split("/")[0]
             wrapper.classList.add(url)
 
@@ -119,8 +119,11 @@ chrome.runtime.sendMessage(
                   item.value.classList.remove("active")
                   chrome.runtime.sendMessage(
                     {
-                      type: "decrementEmotion",
+                      type: "decrementEmotionWithId",
                       emotion: item.key,
+                      id: as[as.length - 1].href
+                        .split("status/")[1]
+                        .split("/")[0],
                     },
                     function (response) {
                       console.log("content.js", response)
@@ -140,6 +143,29 @@ chrome.runtime.sendMessage(
                     item.value.parentElement.parentElement.querySelectorAll(
                       "article a"
                     )
+                  arr.forEach((item2) => {
+                    if (item2.key != item.key) {
+                      if (item2.value.classList.contains("active")) {
+                        //send message to decrement emotion
+                        item2.value.classList.remove("active")
+                        item2.value.classList.add("passive")
+                        chrome.runtime.sendMessage(
+                          {
+                            type: "decrementEmotionWithId",
+                            emotion: item.key,
+                            id: as[as.length - 1].href
+                              .split("status/")[1]
+                              .split("/")[0],
+                          },
+                          function (response) {
+                            document.querySelector(
+                              "#twitter-feelings-status"
+                            ).innerText = response.message
+                          }
+                        )
+                      }
+                    }
+                  })
                   chrome.runtime.sendMessage(
                     {
                       type: "incrementEmotionWithId",
@@ -149,38 +175,12 @@ chrome.runtime.sendMessage(
                         .split("/")[0],
                     },
                     function (response) {
-                      console.log(
-                        "🚀 ~ file: content.js ~ line 120 ~ item.value.addEventListener ~ response",
-                        response
-                      )
                       document.querySelector(
                         "#twitter-feelings-status"
                       ).innerText = response.message
                     }
                   )
                 }
-
-                arr.forEach((item2) => {
-                  if (item2.key != item.key) {
-                    if (item2.value.classList.contains("active")) {
-                      //send message to decrement emotion
-                      item2.value.classList.remove("active")
-                      item2.value.classList.add("passive")
-                      chrome.runtime.sendMessage(
-                        {
-                          type: "decrementEmotion",
-                          emotion: item2.key,
-                        },
-                        function (response) {
-                          console.log("decremented", response)
-                          document.querySelector(
-                            "#twitter-feelings-status"
-                          ).innerText = response.message
-                        }
-                      )
-                    }
-                  }
-                })
               })
               item.value.classList.add("mouseenter")
               item.value.classList.add("mouseleave")
