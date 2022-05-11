@@ -210,6 +210,10 @@ chrome.runtime.sendMessage(
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.message === "TabUpdated") {
+    console.log("TabUpdated")
+    try {
+      document.querySelector(".twitter-feelings-status-wrapper").remove()
+    } catch (error) {}
     injectStatus(request.status)
   }
   if (request.type === "update_subscriptions") {
@@ -252,8 +256,24 @@ function _waitForElement(selector, delay = 50, tries = 100) {
 }
 
 const injectStatus = async (status) => {
-  const h2s = await _waitForElement(`[role="heading"] > span`)
-  const parent = h2s.parentElement
+  if (document.querySelector(".twitter-feelings-status-wrapper")) return
+  console.log("eklenecek")
+  const wrapper = await _waitForElement(
+    `[data-testid="primaryColumn"] > div > div`
+  )
+  const h2 = wrapper.querySelector(`[role="heading"]`)
   statusDiv.querySelector("#twitter-feelings-status").innerHTML = status
-  parent.insertAdjacentHTML("beforebegin", statusDiv.innerHTML)
+  if (h2) {
+    // for profiles, dashboard
+    statusDiv.querySelector(
+      ".twitter-feelings-status-wrapper"
+    ).style.marginTop = "0"
+    h2.insertAdjacentHTML("beforebegin", statusDiv.innerHTML)
+  } else {
+    // for explore
+    statusDiv.querySelector(
+      ".twitter-feelings-status-wrapper"
+    ).style.marginTop = "3rem"
+    wrapper.insertAdjacentHTML("beforeend", statusDiv.innerHTML)
+  }
 }
