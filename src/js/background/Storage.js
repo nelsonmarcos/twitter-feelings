@@ -39,7 +39,11 @@ class Storage {
     const arr = Object.values(this.emotions) // get the values of the emotions
     const max = arr.reduce((a, b) => {
       // get the max value
-      return a.count > b.count ? a : b
+      return a.count > b.count
+        ? a
+        : a.count === b.count
+        ? this.emotions.neutral
+        : b
     })
     this.status = `Twitter makes you feel ${max.emotion}`
     this.set()
