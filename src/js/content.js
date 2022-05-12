@@ -133,9 +133,7 @@ chrome.runtime.sendMessage(
                         .split("/")[0],
                     },
                     function (response) {
-                      document
-                        .querySelector(".twitter-feelings-status-wrapper")
-                        .remove()
+                      removeStatus()
                       injectStatus(response.message)
                       ids = response.ids
                     }
@@ -168,9 +166,7 @@ chrome.runtime.sendMessage(
                           },
                           function (response) {
                             ids = response.ids
-                            document
-                              .querySelector(".twitter-feelings-status-wrapper")
-                              .remove()
+                            removeStatus()
                             injectStatus(response.message)
                           }
                         )
@@ -185,9 +181,7 @@ chrome.runtime.sendMessage(
                     },
                     function (response) {
                       ids = response.ids
-                      document
-                        .querySelector(".twitter-feelings-status-wrapper")
-                        .remove()
+                      removeStatus()
                       injectStatus(response.message)
                     }
                   )
@@ -211,6 +205,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     try {
       document.querySelector(".twitter-feelings-status-wrapper").remove()
     } catch (error) {}
+    removeStatus()
     injectStatus(request.status)
   }
   if (request.type === "update_subscriptions") {
@@ -272,4 +267,10 @@ const injectStatus = async (status) => {
     ).style.marginTop = "3rem"
     wrapper.insertAdjacentHTML("beforeend", statusDiv.innerHTML)
   }
+}
+
+const removeStatus = () => {
+  Array.from(
+    document.querySelectorAll(".twitter-feelings-status-wrapper")
+  ).forEach((i) => i.remove())
 }
