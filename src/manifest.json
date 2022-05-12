@@ -1,16 +1,22 @@
 {
   "name": "Twitter Feelings",
-  "options_page": "options.html",
   "author": "Uğur Kellecioğlu",
   "description": "An extension to track how you feel on Twitter.",
-  "browser_action": {
+  "manifest_version": 3,
+  "options_page": "options.html",
+  "action": {
     "default_popup": "popup.html",
     "default_icon": "icon-34.png"
   },
   "icons": {
     "128": "icon-128.png"
   },
-  "web_accessible_resources": ["happy.png", "sad.png", "neutral.png"],
+  "web_accessible_resources": [
+    {
+      "resources": ["happy.png", "sad.png", "neutral.png"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "content_scripts": [
     {
       "matches": ["http://twitter.com/*", "https://twitter.com/*"],
@@ -18,16 +24,10 @@
     }
   ],
   "background": {
-    "scripts": ["background.bundle.js"]
+    "service_worker": "background.bundle.js"
   },
-  "permissions": [
-    "storage",
-    "tabs",
-    "webRequest",
-    "webRequestBlocking",
-    "alarms",
-    "*://*/*"
-  ],
-  "manifest_version": 2,
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' ; object-src 'self'"
+  },
+  "permissions": ["storage", "tabs", "webRequest", "alarms"]
 }

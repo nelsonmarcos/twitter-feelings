@@ -1,38 +1,13 @@
-var WebpackDevServer = require("webpack-dev-server"),
-    webpack = require("webpack"),
-    config = require("../webpack.config"),
-    env = require("./env"),
-    path = require("path");
+process.env.BABEL_ENV = "production"
+process.env.NODE_ENV = "production"
 
-var options = (config.chromeExtensionBoilerplate || {});
-var excludeEntriesToHotReload = (options.notHotReload || []);
+var webpack = require("webpack"),
+  config = require("../webpack.config")
 
-for (var entryName in config.entry) {
-  if (excludeEntriesToHotReload.indexOf(entryName) === -1) {
-    config.entry[entryName] =
-      [
-        ("webpack-dev-server/client?http://localhost:" + env.PORT),
-        "webpack/hot/dev-server"
-      ].concat(config.entry[entryName]);
-  }
-}
+delete config.chromeExtension
 
-config.plugins =
-  [new webpack.HotModuleReplacementPlugin()].concat(config.plugins || []);
+config.mode = "production"
 
-delete config.chromeExtensionBoilerplate;
-
-var compiler = webpack(config);
-
-var server =
-  new WebpackDevServer(compiler, {
-    hot: true,
-    contentBase: path.join(__dirname, "../build"),
-    sockPort: env.PORT,
-    headers: {
-      "Access-Control-Allow-Origin": "*"
-    },
-    disableHostCheck: true
-  });
-
-server.listen(env.PORT);
+webpack(config, function (err) {
+  if (err) throw err
+})

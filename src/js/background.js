@@ -3,9 +3,9 @@ import "../img/icon-34.png"
 import "../img/happy.png"
 import "../img/sad.png"
 import "../img/neutral.png"
-import Storage from "./background/Storage"
-import Emotion from "./background/Emotion"
-Storage = new Storage()
+import { default as StorageClass } from "./background/Storage"
+
+const Storage = new StorageClass()
 
 /**
  * @author Uğur Kellecioğlu <ugur.kellecioglu@outlook.com>
