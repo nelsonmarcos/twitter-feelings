@@ -11,6 +11,8 @@ h2 {
   letter-spacing: 1px;
   font-size: 1.5rem;
   font-weight: 600;
+  margin: 0;
+  padding: 0;
 }
 .wrapper {
   border-radius: 2rem;
@@ -30,4 +32,22 @@ li {
   font-size: 14px;
   font-weight: 450;
   letter-spacing: 0.5px;
+}
+
+p {
+  font-size: 14px;
+  font-weight: 450;
+  letter-spacing: 0.5px;
+}
+.emotions {
+  display: flex;
+  justify-content: space-around;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+small {
+  margin: 2px;
 }
