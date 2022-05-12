@@ -1,16 +1,10 @@
 var webpack = require("webpack"),
   path = require("path"),
-  fileSystem = require("fs"),
   env = require("./utils/env"),
-  CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin,
+  { CleanWebpackPlugin } = require("clean-webpack-plugin"),
   CopyWebpackPlugin = require("copy-webpack-plugin"),
   HtmlWebpackPlugin = require("html-webpack-plugin"),
   WriteFilePlugin = require("write-file-webpack-plugin")
-
-// load the secrets
-var alias = {}
-
-var secretsPath = path.join(__dirname, "secrets." + env.NODE_ENV + ".js")
 
 var fileExtensions = [
   "jpg",
@@ -25,10 +19,6 @@ var fileExtensions = [
   "woff2",
 ]
 
-if (fileSystem.existsSync(secretsPath)) {
-  alias["secrets"] = secretsPath
-}
-
 var options = {
   mode: process.env.NODE_ENV || "development",
   entry: {
@@ -36,17 +26,28 @@ var options = {
     options: path.join(__dirname, "src", "js", "options.js"),
     background: path.join(__dirname, "src", "js", "background.js"),
     content: path.join(__dirname, "src", "js", "content.js"),
+    Emotions: path.join(__dirname, "src", "js", "background", "Emotion.js"),
+    Storage: path.join(__dirname, "src", "js", "background", "Storage.js"),
   },
   output: {
-    path: path.join(__dirname, "build"),
+    globalObject: "this",
+    path: path.resolve(__dirname, "build"),
     filename: "[name].bundle.js",
   },
   module: {
     rules: [
       {
-        test: /\.css$/,
-        loader: "style-loader!css-loader",
-        exclude: /node_modules/,
+        // look for .css or .scss files
+        test: /\.(css)$/,
+        // in the `src` directory
+        use: [
+          {
+            loader: "style-loader",
+          },
+          {
+            loader: "css-loader",
+          },
+        ],
       },
       {
         test: new RegExp(".(" + fileExtensions.join("|") + ")$"),
@@ -58,14 +59,23 @@ var options = {
         loader: "html-loader",
         exclude: /node_modules/,
       },
+      {
+        test: /\.(js|jsx)$/,
+        loader: "babel-loader",
+        exclude: /node_modules/,
+      },
     ],
   },
   resolve: {
-    alias: alias,
+    extensions: fileExtensions
+      .map((extension) => "." + extension)
+      .concat([".jsx", ".js", ".css"]),
   },
   plugins: [
+    new webpack.ProgressPlugin(),
     // clean the build folder
     new CleanWebpackPlugin({
+      verbose: true,
       cleanStaleWebpackAssets: false,
     }),
     // expose and write the allowed env vars on the compiled bundle
@@ -73,14 +83,20 @@ var options = {
     new CopyWebpackPlugin([
       {
         from: "src/manifest.json",
+        to: path.join(__dirname, "build"),
+        force: true,
         transform: function (content, path) {
           // generates the manifest file using the package.json informations
           return Buffer.from(
-            JSON.stringify({
-              description: process.env.npm_package_description,
-              version: process.env.npm_package_version,
-              ...JSON.parse(content.toString()),
-            })
+            JSON.stringify(
+              {
+                description: process.env.npm_package_description,
+                version: process.env.npm_package_version,
+                ...JSON.parse(content.toString()),
+              },
+              null,
+              "\t"
+            )
           )
         },
       },
@@ -110,7 +126,7 @@ var options = {
 }
 
 if (env.NODE_ENV === "development") {
-  options.devtool = "cheap-module-eval-source-map"
+  options.devtool = "cheap-module-source-map"
 }
 
 module.exports = options

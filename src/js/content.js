@@ -1,9 +1,7 @@
-import Emotion from "./background/Emotion"
-
-import emotionsCss from "../css/emotions.css"
 import emotionsHtml from "../emotions.html"
 import statusHtml from "../status.html"
-
+import "../css/emotions.css"
+import "../css/status.css"
 //create a div
 
 let statusDiv = document.createElement("div")
@@ -202,7 +200,7 @@ chrome.runtime.sendMessage(
           })
         }
       } catch (error) {
-        console.log(error)
+        console.log(error + "" + error.stack + "" + error.message)
       }
     }, 1000)
   }
@@ -210,7 +208,6 @@ chrome.runtime.sendMessage(
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.message === "TabUpdated") {
-    console.log("TabUpdated")
     try {
       document.querySelector(".twitter-feelings-status-wrapper").remove()
     } catch (error) {}
@@ -257,7 +254,6 @@ function _waitForElement(selector, delay = 50, tries = 100) {
 
 const injectStatus = async (status) => {
   if (document.querySelector(".twitter-feelings-status-wrapper")) return
-  console.log("eklenecek")
   const wrapper = await _waitForElement(
     `[data-testid="primaryColumn"] > div > div`
   )
