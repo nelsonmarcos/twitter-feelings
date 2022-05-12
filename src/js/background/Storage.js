@@ -15,7 +15,7 @@ class Storage {
       neutral: new Emotion("neutral"),
     }
     this.ids = {}
-    this.status = "Twitter makes you neutral"
+    this.status = "Twitter makes you feel neutral"
     // set them chrome storage local
     this.set()
   }
@@ -81,7 +81,7 @@ class Storage {
       neutral: new Emotion("neutral"),
     }
     this.ids = {}
-    this.status = "Twitter makes you neutral"
+    this.status = "Twitter makes you feel neutral"
     this.set()
   }
 }
