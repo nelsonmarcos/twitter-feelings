@@ -10,7 +10,7 @@ class Emotion {
   constructor(emotion) {
     this.emotion = emotion
     this.count = 0
-    this.URL = chrome.extension.getURL(`${emotion}.png`)
+    this.URL = chrome.runtime.getURL(`${emotion}.png`)
   }
   increment() {
     this.count++
